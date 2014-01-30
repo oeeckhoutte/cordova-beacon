@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.PluginResult;
+//import org.apache.cordova.CordovaWebView;
+//import org.apache.cordova.PluginResult;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaInterface;
+//import org.apache.cordova.CordovaInterface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,7 +30,7 @@ import android.annotation.TargetApi;
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class BluetoothPlugin extends CordovaPlugin 
 {	
-	private static final String LOG_TAG					= "BluetoothPlugin";
+	private static final String LOG_TAG		 	= "BluetoothPlugin";
 	
 	private static final String ACTION_IS_BT_ENABLED 	= "isEnabled";
 	private static final String ACTION_ENABLE_BT		= "enable";
@@ -55,7 +55,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	private	static final String ACTION_START_READING	= "startConnectionManager";
 	private	static final String ACTION_STOP_READING		= "stopConnectionManager";
 	
-	private static final String ACTION_WRITE			= "write";
+	private static final String ACTION_WRITE		= "write";
 
 	/**
 	 * Bluetooth interface
@@ -103,7 +103,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	public void initialize(CordovaInterface cordova, CordovaWebView view)
 	{
 		super.initialize(cordova, view);
-
+		Log.e("GAYAPP", "Invalid Action[" +cordova.getActivity() + "]");
 		_bluetooth = new BluetoothWrapper(cordova.getActivity().getBaseContext(), _handler);
 		_wasDiscoveryCanceled = false;
 	}
