@@ -43,3 +43,8 @@ window.bluetooth = cordova.require("cordova/plugin/bluetooth");
 License
 -------
 This plugin is available under MIT. See LICENSE for details.
+=======
+cordova-beacon
+==============
+
+Cordova iBeacon Plugin
