@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-//import org.apache.cordova.CordovaWebView;
-//import org.apache.cordova.PluginResult;
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
-//import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaInterface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -472,6 +472,7 @@ public class BluetoothPlugin extends CordovaPlugin
 				JSONObject device = new JSONObject();
 				device.put("name", deviceInfo.a);
 				device.put("address", deviceInfo.b);
+				
 				devices.put(device);
 			}
 			
@@ -822,6 +823,7 @@ public class BluetoothPlugin extends CordovaPlugin
 							deviceInfo.put("name", name);
 							deviceInfo.put("address", address);
 							deviceInfo.put("uuids", deviceUuids);
+							deviceInfo.put("signal", deviceUuids);
 							
 							_uuidCallback.success(deviceInfo);
 							_uuidCallback = null;
@@ -854,6 +856,7 @@ public class BluetoothPlugin extends CordovaPlugin
 						JSONObject bondedDevice = new JSONObject();
 						bondedDevice.put("name", name);
 						bondedDevice.put("address", address);
+						bondedDevice.put("signal", address);
 						
 						if(_pairingCallback != null)
 						{
