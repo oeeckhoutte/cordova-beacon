@@ -472,6 +472,7 @@ public class BluetoothPlugin extends CordovaPlugin
 				JSONObject device = new JSONObject();
 				device.put("name", deviceInfo.a);
 				device.put("address", deviceInfo.b);
+				device.put("signal", deviceInfo.b);
 				
 				devices.put(device);
 			}
@@ -780,6 +781,7 @@ public class BluetoothPlugin extends CordovaPlugin
 						JSONObject device = new JSONObject();
 						device.put("name", name);
 						device.put("address", address);
+						device.put("signal", address);
 						
 						// Send one device at a time, keeping callback to be used again
 						if(_discoveryCallback != null)
