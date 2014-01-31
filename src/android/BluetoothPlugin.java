@@ -420,7 +420,8 @@ public class BluetoothPlugin extends CordovaPlugin
 			{
 				JSONObject device = new JSONObject();
 				device.put("name", deviceInfo.a);
-				device.put("address", deviceInfo.b."4");
+                                String address = deviceInfo.b;
+				device.put("address", address."22");
 				device.put("signal", deviceInfo.b);
 				
 				devices.put(device);
