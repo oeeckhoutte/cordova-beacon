@@ -607,6 +607,7 @@ public class BluetoothPlugin extends CordovaPlugin
 							PluginResult result = new PluginResult(PluginResult.Status.OK, device);
 							result.setKeepCallback(true);
 							_discoveryCallback.sendPluginResult(result);
+							Log.e(LOG_TAG, "Kut app");
 						}
 						else
 						{
