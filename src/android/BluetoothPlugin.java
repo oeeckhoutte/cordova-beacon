@@ -230,7 +230,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	 */
 	private void isEnabled(JSONArray args, CallbackContext callbackCtx)
 	{
-            Log.e('bl123', 'Bluetooth is on');
+            Log.v('bl123', 'Bluetooth is on');
 		try 
 		{
 			callbackCtx.sendPluginResult(new PluginResult(PluginResult.Status.OK, _bluetooth.isEnabled()));
@@ -308,7 +308,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	private void startDiscovery(JSONArray args, CallbackContext callbackCtx)
 	{
 		// TODO Someday add an option to fetch UUIDs at the same time
-		Log.e('bl123', 'startDiscovery');
+		Log.v('bl123', 'startDiscovery');
 		try
 		{
 			if(_bluetooth.isConnecting())
