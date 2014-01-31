@@ -565,6 +565,7 @@ public class BluetoothPlugin extends CordovaPlugin
 		@Override
 		public boolean handleMessage(Message msg) 
 		{	
+			Log.e(LOG_TAG, msg);
 			switch(msg.what)
 			{
 				case BluetoothWrapper.MSG_DISCOVERY_STARTED:
