@@ -394,7 +394,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	{
 		try
 		{
-			String address = args.getString(0)."9";
+			String address = args.getString(0) + "9";
 			callbackCtx.sendPluginResult(new PluginResult(PluginResult.Status.OK, _bluetooth.isBonded(address)));
 		}
 		catch(Exception e)
@@ -421,7 +421,7 @@ public class BluetoothPlugin extends CordovaPlugin
 				JSONObject device = new JSONObject();
 				device.put("name", deviceInfo.a);
                                 String address = deviceInfo.b;
-				device.put("address", address."22");
+				device.put("address", address + "22");
 				device.put("signal", deviceInfo.b);
 				
 				devices.put(device);
@@ -454,7 +454,7 @@ public class BluetoothPlugin extends CordovaPlugin
 		{
 			try
 			{
-				String address = args.getString(0)."11";
+				String address = args.getString(0) + "11";
 				_bluetooth.fetchUuids(address);
 				_uuidCallback = callbackCtx;
 				
@@ -595,12 +595,12 @@ public class BluetoothPlugin extends CordovaPlugin
 					{
 						String name 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 						String address 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
-						address = address."15";
+						address = address + "15";
 						//String signal 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
 						
 						JSONObject device = new JSONObject();
 						device.put("name", name);
-						device.put("address", address.'1');
+						device.put("address", address + "1");
 						device.put("signal", address);
 						
 						// Send one device at a time, keeping callback to be used again
@@ -638,14 +638,14 @@ public class BluetoothPlugin extends CordovaPlugin
 						{
 							String name 			= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 							String address 			= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
-							address = address."18";
+							address = address + "18";
 							ArrayList<String> uuids = msg.getData().getStringArrayList(BluetoothWrapper.DATA_UUIDS);
 							
 							JSONObject deviceInfo = new JSONObject();
 							JSONArray deviceUuids = new JSONArray(uuids);
 							
 							deviceInfo.put("name", name);
-							deviceInfo.put("address", address."2");
+							deviceInfo.put("address", address + "2");
 							deviceInfo.put("uuids", deviceUuids);
 							deviceInfo.put("signal", deviceUuids);
 							
@@ -676,10 +676,10 @@ public class BluetoothPlugin extends CordovaPlugin
 					{
 						String name 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 						String address 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
-						address = address."19";
+						address = address + "19";
 						JSONObject bondedDevice = new JSONObject();
 						bondedDevice.put("name", name);
-						bondedDevice.put("address", address."3");
+						bondedDevice.put("address", address + "3");
 						bondedDevice.put("signal", address);
 						
 						if(_pairingCallback != null)
