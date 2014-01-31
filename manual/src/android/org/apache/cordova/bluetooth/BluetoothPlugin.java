@@ -5,10 +5,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.api.PluginResult;
-import org.apache.cordova.api.CordovaPlugin;
-import org.apache.cordova.api.CallbackContext;
-import org.apache.cordova.api.CordovaInterface;
+import org.apache.cordova.PluginResult;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,12 +25,12 @@ import android.annotation.TargetApi;
  * Bluetooth interface for Cordova 2.6.0 (PhoneGap).
  * 
  * @version 	0.9.1
- * @author  	Taneli Hartikainen
+ * @author  	Jarno van Wezel
  */
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class BluetoothPlugin extends CordovaPlugin 
 {	
-	private static final String LOG_TAG					= "BluetoothPlugin";
+	private static final String LOG_TAG		 	= "BluetoothPlugin";
 	
 	private static final String ACTION_IS_BT_ENABLED 	= "isEnabled";
 	private static final String ACTION_ENABLE_BT		= "enable";
@@ -55,7 +55,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	private	static final String ACTION_START_READING	= "startConnectionManager";
 	private	static final String ACTION_STOP_READING		= "stopConnectionManager";
 	
-	private static final String ACTION_WRITE			= "write";
+	private static final String ACTION_WRITE		= "write";
 
 	/**
 	 * Bluetooth interface
@@ -103,7 +103,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	public void initialize(CordovaInterface cordova, CordovaWebView view)
 	{
 		super.initialize(cordova, view);
-
+		Log.e("GAYAPP", "Invalid Action[" +cordova.getActivity() + "]");
 		_bluetooth = new BluetoothWrapper(cordova.getActivity().getBaseContext(), _handler);
 		_wasDiscoveryCanceled = false;
 	}
@@ -230,6 +230,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	 */
 	private void isEnabled(JSONArray args, CallbackContext callbackCtx)
 	{
+            Log.i('bl123', 'Bluetooth is on');
 		try 
 		{
 			callbackCtx.sendPluginResult(new PluginResult(PluginResult.Status.OK, _bluetooth.isEnabled()));
@@ -307,7 +308,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	private void startDiscovery(JSONArray args, CallbackContext callbackCtx)
 	{
 		// TODO Someday add an option to fetch UUIDs at the same time
-		
+		Log.i('bl123', 'startDiscovery');
 		try
 		{
 			if(_bluetooth.isConnecting())
@@ -394,7 +395,7 @@ public class BluetoothPlugin extends CordovaPlugin
 	{
 		try
 		{
-			String address = args.getString(0);
+			String address = args.getString(0) + "9";
 			callbackCtx.sendPluginResult(new PluginResult(PluginResult.Status.OK, _bluetooth.isBonded(address)));
 		}
 		catch(Exception e)
@@ -402,57 +403,6 @@ public class BluetoothPlugin extends CordovaPlugin
 			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
 		}
 	}
-
-	/**
-	 * Pair the device with the device in the given address.
-	 * 
-	 * @param args			Arguments given. First argument should be the address in String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void pair(JSONArray args, CallbackContext callbackCtx)
-	{
-		// TODO Add a timeout function for pairing
-		
-		if(_pairingCallback != null)
-		{
-			this.error(callbackCtx, "Pairing process is already in progress.", BluetoothError.ERR_PAIRING_IN_PROGRESS);
-		}
-		else
-		{
-			try
-			{
-				String address = args.getString(0);
-				_bluetooth.createBond(address);
-				_pairingCallback = callbackCtx;
-			}
-			catch(Exception e)
-			{
-				_pairingCallback = null;
-				this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-			}
-		}
-	}
-
-	/**
-	 * Unpair with the device in the given address.
-	 * 
-	 * @param args			Arguments given. First argument should be the address in String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void unpair(JSONArray args, CallbackContext callbackCtx)
-	{
-		try
-		{
-			String address = args.getString(0);
-			_bluetooth.removeBond(address);
-			callbackCtx.success();
-		}
-		catch(Exception e)
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
-	
 
 	/**
 	 * Get the devices paired with this device.
@@ -471,7 +421,10 @@ public class BluetoothPlugin extends CordovaPlugin
 			{
 				JSONObject device = new JSONObject();
 				device.put("name", deviceInfo.a);
-				device.put("address", deviceInfo.b);
+                                String address = deviceInfo.b;
+				device.put("address", address + "22");
+				device.put("signal", deviceInfo.b);
+				
 				devices.put(device);
 			}
 			
@@ -502,7 +455,7 @@ public class BluetoothPlugin extends CordovaPlugin
 		{
 			try
 			{
-				String address = args.getString(0);
+				String address = args.getString(0) + "11";
 				_bluetooth.fetchUuids(address);
 				_uuidCallback = callbackCtx;
 				
@@ -528,80 +481,6 @@ public class BluetoothPlugin extends CordovaPlugin
 			callbackCtx.sendPluginResult(new PluginResult(PluginResult.Status.OK, _bluetooth.isConnected()));
 		} 
 		catch(Exception e)
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
-
-	/**
-	 * Attempt to connect to a device.
-	 * 
-	 * @param args			Arguments given. [Address, UUID, ConnectionType(Secure, Insecure, Hax)], String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void connect(JSONArray args, CallbackContext callbackCtx)
-	{
-		boolean isConnecting 	= _bluetooth.isConnecting();
-		boolean isConnected		= _bluetooth.isConnected(); 
-		
-		if(isConnecting)
-		{
-			this.error(callbackCtx, "There is already a connection attempt in progress.", BluetoothError.ERR_CONNECTING_IN_PROGRESS);
-		}
-		else if(isConnected)
-		{
-			this.error(callbackCtx, "There is already a connection in progress.", BluetoothError.ERR_CONNECTION_ALREADY_EXISTS);
-		}
-		else
-		{
-			try
-			{
-				if(_bluetooth.isDiscovering())
-				{
-					_wasDiscoveryCanceled = true;
-					_bluetooth.stopDiscovery();
-					
-					if(_discoveryCallback != null)
-					{
-						this.error(_discoveryCallback, "Discovery stopped because a connection attempt was started.", BluetoothError.ERR_DISCOVERY_CANCELED);
-					}
-				}
-			
-				String address 		= args.getString(0);
-				String uuid			= args.getString(1);
-				String connTypeStr	= args.getString(2);
-				
-				_bluetooth.connect(address, uuid, connTypeStr);
-				
-				PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-				result.setKeepCallback(true);
-				callbackCtx.sendPluginResult(result);
-				
-				_connectCallback = callbackCtx;
-			}
-			catch(Exception e)
-			{
-				_connectCallback = null;
-				
-				this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-			}
-		}
-	}
-
-	/**
-	 * Disconnect from the device currently connected to.
-	 * 
-	 * @param args			Arguments given.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void disconnect(JSONArray args, CallbackContext callbackCtx)
-	{
-		try 
-		{
-			_bluetooth.disconnect();
-			callbackCtx.success();
-		} 
-		catch(Exception e) 
 		{
 			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
 		}
@@ -673,65 +552,6 @@ public class BluetoothPlugin extends CordovaPlugin
 			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
 		}
 	}
-
-	/**
-	 * Write given data to the managed connection.
-	 * 
-	 * @param args			Arguments given. First argument should be the data you want to write.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void write(JSONArray args, CallbackContext callbackCtx)
-	{
-		Log.d(LOG_TAG, "write-method called");
-		
-		try 
-		{
-			Object data 		= args.get(0);
-			String encoding 	= args.getString(1);
-			boolean forceString = args.getBoolean(2); 
-			
-			byte[] defaultBytes = new byte[4];
-			ByteBuffer buffer = ByteBuffer.wrap(defaultBytes);
-			
-			if(forceString || data.getClass() == String.class)
-			{
-				String dataString = (String)data;
-				buffer = ByteBuffer.wrap(dataString.getBytes(encoding));
-			}
-			else if(data.getClass().equals(Integer.class))
-			{	
-				byte[] bytes = new byte[4];
-				buffer = ByteBuffer.wrap(bytes);
-				buffer.putInt((Integer)data);
-			}
-			else if(data.getClass().equals(Double.class))
-			{
-				byte[] bytes = new byte[8];
-				buffer = ByteBuffer.wrap(bytes);
-				buffer.putDouble((Double)data);
-			}
-			else
-			{
-				this.error(callbackCtx, "Unknown data-type", BluetoothError.ERR_UNKNOWN);
-				return;
-			}
-			
-			if(!_bluetooth.isConnected())
-			{
-				this.error(callbackCtx, "There is no managed connection to write to.", BluetoothError.ERR_CONNECTION_DOESNT_EXIST);
-			}
-			else
-			{
-				buffer.rewind();
-				_bluetooth.write(buffer.array());
-				callbackCtx.success();
-			}
-		} 
-		catch (Exception e) 
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
 	
 	/**
 	 * Handle messages from BluetoothWrapper. BluetoothWrapper does a lot of asynchronous
@@ -747,6 +567,7 @@ public class BluetoothPlugin extends CordovaPlugin
 		@Override
 		public boolean handleMessage(Message msg) 
 		{	
+			Log.e('bl123', msg);
 			switch(msg.what)
 			{
 				case BluetoothWrapper.MSG_DISCOVERY_STARTED:
@@ -775,10 +596,13 @@ public class BluetoothPlugin extends CordovaPlugin
 					{
 						String name 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 						String address 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
+						address = address + "15";
+						//String signal 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
 						
 						JSONObject device = new JSONObject();
 						device.put("name", name);
-						device.put("address", address);
+						device.put("address", address + "1");
+						device.put("signal", address);
 						
 						// Send one device at a time, keeping callback to be used again
 						if(_discoveryCallback != null)
@@ -786,10 +610,11 @@ public class BluetoothPlugin extends CordovaPlugin
 							PluginResult result = new PluginResult(PluginResult.Status.OK, device);
 							result.setKeepCallback(true);
 							_discoveryCallback.sendPluginResult(result);
+							Log.v(LOG_TAG, "Kut app");
 						}
 						else
 						{
-							Log.e(LOG_TAG, "CallbackContext for discovery doesn't exist.");
+							Log.e(LOG_TAG, "CallbackContext for discovery doesn't exist...");
 						}
 					}
 					catch(JSONException e)
@@ -814,14 +639,16 @@ public class BluetoothPlugin extends CordovaPlugin
 						{
 							String name 			= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 							String address 			= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
+							address = address + "18";
 							ArrayList<String> uuids = msg.getData().getStringArrayList(BluetoothWrapper.DATA_UUIDS);
 							
 							JSONObject deviceInfo = new JSONObject();
 							JSONArray deviceUuids = new JSONArray(uuids);
 							
 							deviceInfo.put("name", name);
-							deviceInfo.put("address", address);
+							deviceInfo.put("address", address + "2");
 							deviceInfo.put("uuids", deviceUuids);
+							deviceInfo.put("signal", deviceUuids);
 							
 							_uuidCallback.success(deviceInfo);
 							_uuidCallback = null;
@@ -850,10 +677,11 @@ public class BluetoothPlugin extends CordovaPlugin
 					{
 						String name 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 						String address 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
-						
+						address = address + "19";
 						JSONObject bondedDevice = new JSONObject();
 						bondedDevice.put("name", name);
-						bondedDevice.put("address", address);
+						bondedDevice.put("address", address + "3");
+						bondedDevice.put("signal", address);
 						
 						if(_pairingCallback != null)
 						{
