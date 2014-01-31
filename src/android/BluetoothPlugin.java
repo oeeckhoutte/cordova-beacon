@@ -404,57 +404,6 @@ public class BluetoothPlugin extends CordovaPlugin
 	}
 
 	/**
-	 * Pair the device with the device in the given address.
-	 * 
-	 * @param args			Arguments given. First argument should be the address in String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void pair(JSONArray args, CallbackContext callbackCtx)
-	{
-		// TODO Add a timeout function for pairing
-		
-		if(_pairingCallback != null)
-		{
-			this.error(callbackCtx, "Pairing process is already in progress.", BluetoothError.ERR_PAIRING_IN_PROGRESS);
-		}
-		else
-		{
-			try
-			{
-				String address = args.getString(0);
-				_bluetooth.createBond(address);
-				_pairingCallback = callbackCtx;
-			}
-			catch(Exception e)
-			{
-				_pairingCallback = null;
-				this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-			}
-		}
-	}
-
-	/**
-	 * Unpair with the device in the given address.
-	 * 
-	 * @param args			Arguments given. First argument should be the address in String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void unpair(JSONArray args, CallbackContext callbackCtx)
-	{
-		try
-		{
-			String address = args.getString(0);
-			_bluetooth.removeBond(address);
-			callbackCtx.success();
-		}
-		catch(Exception e)
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
-	
-
-	/**
 	 * Get the devices paired with this device.
 	 * 
 	 * @param args			Arguments given.
@@ -536,80 +485,6 @@ public class BluetoothPlugin extends CordovaPlugin
 	}
 
 	/**
-	 * Attempt to connect to a device.
-	 * 
-	 * @param args			Arguments given. [Address, UUID, ConnectionType(Secure, Insecure, Hax)], String format.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void connect(JSONArray args, CallbackContext callbackCtx)
-	{
-		boolean isConnecting 	= _bluetooth.isConnecting();
-		boolean isConnected		= _bluetooth.isConnected(); 
-		
-		if(isConnecting)
-		{
-			this.error(callbackCtx, "There is already a connection attempt in progress.", BluetoothError.ERR_CONNECTING_IN_PROGRESS);
-		}
-		else if(isConnected)
-		{
-			this.error(callbackCtx, "There is already a connection in progress.", BluetoothError.ERR_CONNECTION_ALREADY_EXISTS);
-		}
-		else
-		{
-			try
-			{
-				if(_bluetooth.isDiscovering())
-				{
-					_wasDiscoveryCanceled = true;
-					_bluetooth.stopDiscovery();
-					
-					if(_discoveryCallback != null)
-					{
-						this.error(_discoveryCallback, "Discovery stopped because a connection attempt was started.", BluetoothError.ERR_DISCOVERY_CANCELED);
-					}
-				}
-			
-				String address 		= args.getString(0);
-				String uuid			= args.getString(1);
-				String connTypeStr	= args.getString(2);
-				
-				_bluetooth.connect(address, uuid, connTypeStr);
-				
-				PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-				result.setKeepCallback(true);
-				callbackCtx.sendPluginResult(result);
-				
-				_connectCallback = callbackCtx;
-			}
-			catch(Exception e)
-			{
-				_connectCallback = null;
-				
-				this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-			}
-		}
-	}
-
-	/**
-	 * Disconnect from the device currently connected to.
-	 * 
-	 * @param args			Arguments given.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void disconnect(JSONArray args, CallbackContext callbackCtx)
-	{
-		try 
-		{
-			_bluetooth.disconnect();
-			callbackCtx.success();
-		} 
-		catch(Exception e) 
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
-
-	/**
 	 * See if we have a managed connection active (allows read/write).
 	 * 
 	 * @param args			Arguments given.
@@ -671,65 +546,6 @@ public class BluetoothPlugin extends CordovaPlugin
 			}
 		}
 		catch(Exception e)
-		{
-			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
-		}
-	}
-
-	/**
-	 * Write given data to the managed connection.
-	 * 
-	 * @param args			Arguments given. First argument should be the data you want to write.
-	 * @param callbackCtx	Where to send results.
-	 */
-	private void write(JSONArray args, CallbackContext callbackCtx)
-	{
-		Log.d(LOG_TAG, "write-method called");
-		
-		try 
-		{
-			Object data 		= args.get(0);
-			String encoding 	= args.getString(1);
-			boolean forceString = args.getBoolean(2); 
-			
-			byte[] defaultBytes = new byte[4];
-			ByteBuffer buffer = ByteBuffer.wrap(defaultBytes);
-			
-			if(forceString || data.getClass() == String.class)
-			{
-				String dataString = (String)data;
-				buffer = ByteBuffer.wrap(dataString.getBytes(encoding));
-			}
-			else if(data.getClass().equals(Integer.class))
-			{	
-				byte[] bytes = new byte[4];
-				buffer = ByteBuffer.wrap(bytes);
-				buffer.putInt((Integer)data);
-			}
-			else if(data.getClass().equals(Double.class))
-			{
-				byte[] bytes = new byte[8];
-				buffer = ByteBuffer.wrap(bytes);
-				buffer.putDouble((Double)data);
-			}
-			else
-			{
-				this.error(callbackCtx, "Unknown data-type", BluetoothError.ERR_UNKNOWN);
-				return;
-			}
-			
-			if(!_bluetooth.isConnected())
-			{
-				this.error(callbackCtx, "There is no managed connection to write to.", BluetoothError.ERR_CONNECTION_DOESNT_EXIST);
-			}
-			else
-			{
-				buffer.rewind();
-				_bluetooth.write(buffer.array());
-				callbackCtx.success();
-			}
-		} 
-		catch (Exception e) 
 		{
 			this.error(callbackCtx, e.getMessage(), BluetoothError.ERR_UNKNOWN);
 		}
