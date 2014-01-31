@@ -25,7 +25,7 @@ import android.annotation.TargetApi;
  * Bluetooth interface for Cordova 2.6.0 (PhoneGap).
  * 
  * @version 	0.9.1
- * @author  	Taneli Hartikainen
+ * @author  	Jarno van Wezel
  */
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class BluetoothPlugin extends CordovaPlugin 
