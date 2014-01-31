@@ -594,11 +594,12 @@ public class BluetoothPlugin extends CordovaPlugin
 					{
 						String name 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_NAME);
 						String address 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
+						String signal 	= msg.getData().getString(BluetoothWrapper.DATA_DEVICE_ADDRESS);
 						
 						JSONObject device = new JSONObject();
 						device.put("name", name);
 						device.put("address", address);
-						device.put("signal", address);
+						device.put("signal", signal);
 						
 						// Send one device at a time, keeping callback to be used again
 						if(_discoveryCallback != null)
@@ -609,7 +610,7 @@ public class BluetoothPlugin extends CordovaPlugin
 						}
 						else
 						{
-							Log.e(LOG_TAG, "CallbackContext for discovery doesn't exist.");
+							Log.e(LOG_TAG, "CallbackContext for discovery doesn't exist.!");
 						}
 					}
 					catch(JSONException e)
